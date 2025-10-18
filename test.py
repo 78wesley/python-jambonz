@@ -3,18 +3,13 @@ from jambonz_verbs import *
 app = Application()
 
 
-# say = Say("")
-# gather = Gather(input="speech", actionHook="/gather-result")
-# play = Play("https://example.com/music.mp3")
-# hangup = Hangup()
+# app.add_verb(VerbSay(""))
+# app.add_verb(VerbGather(input="speech", actionHook="/gather-result"))
+# app.add_verb(VerbPlay("https://example.com/music.mp3"))
+# app.add_verb(VerbHangup())
 
-# app.add_verb(say)
-# app.add_verb(gather)
-# app.add_verb(play)
-# app.add_verb(hangup)
-
-# app.add_verb(Alert(""))
-# app.add_verb(Alert("abc"))
+# app.add_verb(VerbAlert(""))
+# app.add_verb(VerbAlert("abc"))
 
 # app.add_verb(
 #     Conference(
@@ -32,10 +27,10 @@ app = Application()
 #         statusEvents=[],
 #         waitHook="",
 #     )
-
 # )
 
-# app.add_verb(VerbConfig())
+app.add_verb(VerbConfig())
 
 print(app.to_json())
 print(app.to_dict())
+print(app.total_tasks())

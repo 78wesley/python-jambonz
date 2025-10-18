@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
+from base import Verb
+from enum import Enum
 
 
 @dataclass
@@ -19,7 +21,7 @@ class BargeIn:
 class FillerNoise:
     enable: bool
     url: str
-    startDelaySecs: Optional[int] = None
+    startDelaySecs: int
 
 
 @dataclass
@@ -30,10 +32,53 @@ class Record:
 
 
 @dataclass
+class Vad:
+    enable: bool
+    mode: int
+    voiceMs: int
+
+
+@dataclass
+class Recognizer:
+    vendor: str
+    transcriptionHook: str
+    altLanguages: Optional[list] = None
+    asrDtmfTerminationDigit: Optional[str] = None
+    asrTimeout: Optional[int] = None
+    azureServiceEndpoint: Optional[str] = None
+    diarization: Optional[bool] = None
+    diarizationMaxSpeakers: Optional[int] = None
+    diarizationMinSpeakers: Optional[int] = None
+    enhancedModel: Optional[bool] = None
+    filterMethod: Optional[str] = None
+    hints: Optional[list] = None
+    hintsBoost: Optional[int] = None
+    identifyChannels: Optional[bool] = None
+    initialSpeechTimeoutMs: Optional[int] = None
+    interactionType: Optional[type] = None
+    interim: Optional[str] = None
+    language: Optional[bool] = None
+    languageModelName: Optional[str] = None
+    minConfidence: Optional[str] = None
+    model: Optional[int] = None
+    naicsCode: Optional[str] = None
+    outputFormat: Optional[int] = None
+    profanityFilter: Optional[str] = None
+    profanityOption: Optional[bool] = None
+    punctuation: Optional[str] = None
+    requestSnr: Optional[bool] = None
+    separateRecognitionPerChannel: Optional[bool] = None
+    singleUtterance: Optional[bool] = None
+    vad: Optional[str] = None
+    vocabularyFilterName: Optional[str] = None
+    vocabularyName: Optional[str] = None
+
+
+@dataclass
 class Transcribe:
     enable: bool
     transcriptionHook: str
-    recognizer: Optional[Dict[str, Any]] = None  # TODO Recognizer
+    recognizer: Optional[Recognizer] = None
 
 
 @dataclass
@@ -49,16 +94,44 @@ class ConfirmHook:
 
 
 @dataclass
-class Target:
-    type: str
-    number: Optional[str] = None
-    sipUri: Optional[str] = None
-    name: Optional[str] = None
+class Auth:
+    username: Optional[str] = None
+    password: Optional[str] = None
+
+
+@dataclass
+class TargetPhone:
+    type: str = field(init=False, default="phone")
+    number: str
+    confirmHook: Optional[str] = None
+    trunk: Optional[str] = None
+    proxy: Optional[str] = None
+
+
+@dataclass
+class TargetSip:
+    type: str = field(init=False, default="sip")
+    sipUri: str
+    confirmHook: Optional[str] = None
+    auth: Optional[Auth] = None
+    proxy: Optional[Auth] = None
+
+
+@dataclass
+class TargetUser:
+    type: str = field(init=False, default="user")
+    name: str
+    confirmHook: Optional[str] = None
+    proxy: Optional[str] = None
+
+
+@dataclass
+class TargetTeams:
+    type: str = field(init=False, default="teams")
+    number: str
     tenant: Optional[str] = None
     voicemail: Optional[bool] = None
-    trunk: Optional[str] = None
-    auth: Optional[Dict[str, str]] = None
-    proxy: Optional[str] = None
+    proxy: Optional[bool] = None
 
 
 @dataclass
@@ -74,4 +147,69 @@ class Amd:
     actionHook: str
     thresholdWordCount: Optional[int] = 9
     digitCount: Optional[int] = 0
-    timers: Optional[Dict[str, int]] = None
+    timers: Optional[Timers] = None
+    recognizer: Optional[Recognizer] = None
+
+
+@dataclass
+class Synthesizer:
+    vendor: str
+    voice: str
+    gender: Optional[str] = None
+    engine: Optional[str] = None
+    label: Optional[str] = None
+    language: Optional[str] = None
+    options: Optional[Dict] = None
+
+
+@dataclass
+class WsAuth:
+    username: str
+    password: str
+
+
+@dataclass
+class BidirectionalAudio:
+    enabled: Optional[bool] = True
+    sampleRate: Optional[int] = None
+    streaming: Optional[bool] = False
+
+
+@dataclass
+class Listen:
+    actionHook: str
+    url: str
+    finishOnKey: Optional[str] = None
+    maxLength: Optional[int] = None
+    metadata: Optional[Dict] = None
+    mixType: Optional[str] = "mono"
+    passDtmf: Optional[bool] = False
+    playBeep: Optional[bool] = False
+    sampleRate: Optional[int] = 8000
+    timeout: Optional[int] = None
+    transcribe: Optional[Transcribe] = None
+    wsAuth: Optional[WsAuth] = None
+    bidirectionalAudio: Optional[BidirectionalAudio] = None
+
+
+@dataclass
+class TTS:
+    language: str
+    gender: Optional[str] = None
+    vendor: Optional[str] = None
+    voice: Optional[str] = None
+
+
+@dataclass
+class ActionHookDelayAction:
+    actions: list[Verb]
+    enabled: bool
+    noResponseGiveUpTimeout: Optional[int] = None
+    noResponseTimeout: Optional[int] = 0
+    retries: Optional[int] = 1
+
+
+class SipRequestMethod(Enum):
+    INFO = "INFO"
+    MESSAGE = "MESSAGE"
+    NOTIFY = "NOTIFY"

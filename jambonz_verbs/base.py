@@ -7,8 +7,17 @@ from .typ import (
     Transcribe,
     DtmfHook,
     ConfirmHook,
-    Target,
     Amd,
+    TargetPhone,
+    TargetSip,
+    TargetUser,
+    TargetTeams,
+    Recognizer,
+    Synthesizer,
+    Listen,
+    TTS,
+    ActionHookDelayAction,
+    SipRequestMethod,
 )
 import json
 
@@ -40,6 +49,9 @@ class Application:
     def to_json(self, **kwargs: Any) -> str:
         """Serialize verbs to JSON. Accepts all kwargs that json.dumps supports."""
         return json.dumps(self.to_dict(), **kwargs)
+
+    def total_tasks(self) -> int:
+        return len(self.verbs)
 
 
 @dataclass
@@ -90,15 +102,15 @@ class VerbConfig(Verb):
     bargeIn: Optional[BargeIn] = None
     boostAudioSignal: Optional[Union[str, int]] = None
     fillerNoise: Optional[FillerNoise] = None
-    listen: Optional[Dict[str, Any]] = None
+    listen: Optional[Listen] = None
     notifyEvents: Optional[bool] = None
     onHoldMusic: Optional[str] = None
-    recognizer: Optional[Dict[str, Any]] = None
+    recognizer: Optional[Recognizer] = None
     reset: Optional[Union[str, List[str]]] = None
     record: Optional[Record] = None
     transcribe: Optional[Transcribe] = None
     sipRequestWithinDialogHook: Optional[Union[str, Dict[str, Any]]] = None
-    synthesizer: Optional[Dict[str, Any]] = None
+    synthesizer: Optional[Synthesizer] = None
 
 
 @dataclass
@@ -121,7 +133,13 @@ class VerbDequeue(Verb):
 class VerbDial:
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dial)."""
 
-    verb: str = "dial"
+    verb: str = field(init=False, default="dial")
+    # Required
+    target: List[TargetPhone | TargetSip | TargetUser | TargetTeams] = field(
+        default_factory=list
+    )
+
+    # Optional
     actionHook: Optional[str] = None
     amd: Optional[Amd] = None
     anchorMedia: Optional[bool] = False
@@ -141,4 +159,241 @@ class VerbDial:
     timeLimit: Optional[int] = None
     timeout: Optional[int] = 60
     transcribe: Optional[Dict] = None
-    target: List[Target] = field(default_factory=list)
+
+
+@dataclass
+class VerbDialogflow:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/Dialogflow)."""
+
+    verb: str = field(init=False, default="Dialogflow")
+    # Required
+    credentials: str
+    lang: str
+    project: str
+
+    # Optional
+    actionHook: Optional[str] = None
+    bargein: Optional[bool] = None
+    eventHook: Optional[str] = None
+    noInputEvent: Optional[str] = None
+    noInputTimeout: Optional[float] = None
+    passDtmfAsTextInput: Optional[bool] = None
+    thinkingMusic: Optional[str] = None
+    tts: Optional[TTS] = None
+    welcomeEvent: Optional[str] = None
+    welcomeEventParams: Optional[Dict] = field(default_factory=dict)
+
+
+@dataclass
+class VerbDtmf:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dtmf)."""
+
+    verb: str = field(init=False, default="dtmf")
+    # Required
+    dtmf: str
+
+    # Optional
+    duration: Optional[str] = 500
+
+
+@dataclass
+class Verbdub:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dub)."""
+
+    verb: str = field(init=False, default="dub")
+    # Required
+    action: str
+    track: str
+
+    # Optional
+    gain: Optional[str] = None
+    loop: Optional[bool] = None
+    play: Optional[str] = None
+    say: Optional[str] = None
+
+
+@dataclass
+class VerbEnqueue:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/enqueue)."""
+
+    verb: str = field(init=False, default="enqueue")
+    # Required
+    name: str
+
+    # Optional
+    actionHook: Optional[str] = None
+    priority: Optional[int] = 999
+    waitHook: Optional[str] = None
+
+
+@dataclass
+class VerbGather:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/gather)."""
+
+    verb: str = field(init=False, default="gather")
+    # Required
+    actionHook: str
+
+    # Optional
+    actionHookDelayAction: Optional[ActionHookDelayAction] = None
+    bargein: Optional[bool] = None
+    dtmfBargein: Optional[bool] = None
+    fillerNoise: Optional[FillerNoise] = None
+    finishOnKey: Optional[str] = None
+    input: Optional[List[str]] = field(default_factory=lambda: ["digits"])
+    interDigitTimeout: Optional[int] = None
+    listenDuringPrompt: Optional[bool] = True
+    maxDigits: Optional[int] = None
+    minBargeinWordCount: Optional[int] = 1
+    minDigits: Optional[int] = 1
+    numDigits: Optional[int] = None
+    partialResultHook: Optional[str] = None
+    play: Optional[Dict[str, Any]] = None
+    recognizer: Optional[Dict[str, Any]] = None
+    say: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class VerbHangup:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/hangup)."""
+
+    verb: str = field(init=False, default="hangup")
+    headers: Optional[Dict] = None
+
+
+@dataclass
+class VerbLeave:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/leave)."""
+
+    verb: str = field(init=False, default="leave")
+
+
+@dataclass
+class VerbListen(Listen):
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/listen)."""
+
+    verb: str = field(init=False, default="listen")
+
+
+@dataclass
+class VerbPause:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/pause)."""
+
+    verb: str = field(init=False, default="pause")
+    length: Optional[int] = None
+
+
+@dataclass
+class VerbPlay:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/play)."""
+
+    verb: str = field(init=False, default="play")
+
+    # Required
+    url: str
+
+    # Optional
+    actionHook: Optional[str] = None
+    earlyMedia: Optional[bool] = False
+    loop: Optional[int] = 1
+    seekOffset: Optional[int] = None
+    timeoutSecs: Optional[int] = None
+
+
+@dataclass
+class VerbRasa:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/rasa)."""
+
+    verb: str = field(init=False, default="rasa")
+
+    # Required
+    url: str
+
+    # Optional
+    actionHook: Optional[str] = None
+    eventhook: Optional[str] = None
+    promt: Optional[str] = None
+    recognizer: Optional[Recognizer] = None
+    tts: Optional[TTS] = None
+
+
+@dataclass
+class VerbRedirect:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/redirect)."""
+
+    verb: str = field(init=False, default="redirect")
+    actionHook: str
+
+
+@dataclass
+class VerbSay:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/say)."""
+
+    verb: str = field(init=False, default="say")
+
+    # Optional
+    earlyMedia: Optional[bool] = None
+    loop: Optional[int] = False
+    stream: Optional[bool] = None
+    synthesizer: Optional[Synthesizer] = None
+    text: Optional[str] = None
+
+
+@dataclass
+class VerbSipDecline:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/sipdecline)."""
+
+    verb: str = field(init=False, default="sip:decline")
+
+    # Required
+    status: int
+
+    # Optional
+    headers: Optional[Dict] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class VerbSipRefer:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/siprefer)."""
+
+    verb: str = field(init=False, default="sip:refer")
+    # Required
+    referTo: int
+    # Optional
+    reason: Optional[str] = None
+    eventHook: Optional[str] = None
+    headers: Optional[Dict] = None
+    referredBy: Optional[str] = None
+
+
+@dataclass
+class VerbSipRequest:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/siprequest)."""
+
+    verb: str = field(init=False, default="sip:request")
+
+    # Required
+    method: SipRequestMethod
+
+    # Optional
+    actionHook: Optional[str] = None
+    body: Optional[str] = None
+    headers: Optional[Dict] = None
+
+
+@dataclass
+class VerbTag:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/tag)."""
+
+    verb: str = field(init=False, default="tag")
+    data: Dict
+
+
+@dataclass
+class VerbTranscribe:
+    """Read the docs [here](https://docs.jambonz.org/verbs/verbs/transcribe)."""
+
+    verb: str = field(init=False, default="transcribe")
+    transcriptionHook: str
+    recognizer: Optional[Recognizer] = None
