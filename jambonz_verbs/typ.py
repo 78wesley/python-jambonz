@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
-from base import Verb
 from enum import Enum
 
 
@@ -202,14 +201,8 @@ class TTS:
 
 @dataclass
 class ActionHookDelayAction:
-    actions: list[Verb]
+    actions: list[Dict]  # Dict needs to be fully Verb objects
     enabled: bool
     noResponseGiveUpTimeout: Optional[int] = None
     noResponseTimeout: Optional[int] = 0
     retries: Optional[int] = 1
-
-
-class SipRequestMethod(Enum):
-    INFO = "INFO"
-    MESSAGE = "MESSAGE"
-    NOTIFY = "NOTIFY"

@@ -17,7 +17,6 @@ from .typ import (
     Listen,
     TTS,
     ActionHookDelayAction,
-    SipRequestMethod,
 )
 import json
 
@@ -130,7 +129,7 @@ class VerbDequeue(Verb):
 
 
 @dataclass
-class VerbDial:
+class VerbDial(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dial)."""
 
     verb: str = field(init=False, default="dial")
@@ -162,7 +161,7 @@ class VerbDial:
 
 
 @dataclass
-class VerbDialogflow:
+class VerbDialogflow(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/Dialogflow)."""
 
     verb: str = field(init=False, default="Dialogflow")
@@ -185,7 +184,7 @@ class VerbDialogflow:
 
 
 @dataclass
-class VerbDtmf:
+class VerbDtmf(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dtmf)."""
 
     verb: str = field(init=False, default="dtmf")
@@ -197,7 +196,7 @@ class VerbDtmf:
 
 
 @dataclass
-class Verbdub:
+class Verbdub(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/dub)."""
 
     verb: str = field(init=False, default="dub")
@@ -213,7 +212,7 @@ class Verbdub:
 
 
 @dataclass
-class VerbEnqueue:
+class VerbEnqueue(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/enqueue)."""
 
     verb: str = field(init=False, default="enqueue")
@@ -227,7 +226,7 @@ class VerbEnqueue:
 
 
 @dataclass
-class VerbGather:
+class VerbGather(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/gather)."""
 
     verb: str = field(init=False, default="gather")
@@ -254,7 +253,7 @@ class VerbGather:
 
 
 @dataclass
-class VerbHangup:
+class VerbHangup(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/hangup)."""
 
     verb: str = field(init=False, default="hangup")
@@ -262,21 +261,21 @@ class VerbHangup:
 
 
 @dataclass
-class VerbLeave:
+class VerbLeave(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/leave)."""
 
     verb: str = field(init=False, default="leave")
 
 
 @dataclass
-class VerbListen(Listen):
+class VerbListen(Verb, Listen):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/listen)."""
 
     verb: str = field(init=False, default="listen")
 
 
 @dataclass
-class VerbPause:
+class VerbPause(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/pause)."""
 
     verb: str = field(init=False, default="pause")
@@ -284,7 +283,7 @@ class VerbPause:
 
 
 @dataclass
-class VerbPlay:
+class VerbPlay(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/play)."""
 
     verb: str = field(init=False, default="play")
@@ -301,7 +300,7 @@ class VerbPlay:
 
 
 @dataclass
-class VerbRasa:
+class VerbRasa(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/rasa)."""
 
     verb: str = field(init=False, default="rasa")
@@ -318,7 +317,7 @@ class VerbRasa:
 
 
 @dataclass
-class VerbRedirect:
+class VerbRedirect(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/redirect)."""
 
     verb: str = field(init=False, default="redirect")
@@ -326,7 +325,7 @@ class VerbRedirect:
 
 
 @dataclass
-class VerbSay:
+class VerbSay(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/say)."""
 
     verb: str = field(init=False, default="say")
@@ -340,7 +339,7 @@ class VerbSay:
 
 
 @dataclass
-class VerbSipDecline:
+class VerbSipDecline(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/sipdecline)."""
 
     verb: str = field(init=False, default="sip:decline")
@@ -354,7 +353,7 @@ class VerbSipDecline:
 
 
 @dataclass
-class VerbSipRefer:
+class VerbSipRefer(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/siprefer)."""
 
     verb: str = field(init=False, default="sip:refer")
@@ -368,13 +367,13 @@ class VerbSipRefer:
 
 
 @dataclass
-class VerbSipRequest:
+class VerbSipRequest(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/siprequest)."""
 
     verb: str = field(init=False, default="sip:request")
 
     # Required
-    method: SipRequestMethod
+    method: str
 
     # Optional
     actionHook: Optional[str] = None
@@ -383,7 +382,7 @@ class VerbSipRequest:
 
 
 @dataclass
-class VerbTag:
+class VerbTag(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/tag)."""
 
     verb: str = field(init=False, default="tag")
@@ -391,7 +390,7 @@ class VerbTag:
 
 
 @dataclass
-class VerbTranscribe:
+class VerbTranscribe(Verb):
     """Read the docs [here](https://docs.jambonz.org/verbs/verbs/transcribe)."""
 
     verb: str = field(init=False, default="transcribe")
