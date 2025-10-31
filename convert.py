@@ -1,0 +1,142 @@
+import httpx
+import json
+import keyword
+import re
+from dataclasses import dataclass
+from typing import Any, Dict
+
+# ---- Type mapping ----
+TYPE_MAP = {
+    "string": "str",
+    "number": "float",
+    "boolean": "bool",
+    "array": "list[Any]",
+    "object": "dict[str, Any]",
+}
+
+
+def to_class_name(name: str) -> str:
+    """Convert key name to PascalCase class name."""
+    return "".join(
+        part.capitalize() for part in re.split(r"[^a-zA-Z0-9]", name) if part
+    )
+
+
+def sanitize_field_name(name: str) -> str:
+    """Avoid Python reserved keywords and invalid names."""
+    if keyword.iskeyword(name):
+        return f"_{name}"
+    if not re.match(r"^[A-Za-z_]\w*$", name):
+        return re.sub(r"\W", "_", name)
+    return name
+
+
+def find_refs(value: Any) -> set[str]:
+    """Find all #references in this value."""
+    refs = set()
+    if isinstance(value, str) and value.startswith("#"):
+        refs.add(to_class_name(value[1:]))
+    elif isinstance(value, dict):
+        for v in value.values():
+            refs |= find_refs(v)
+    elif isinstance(value, list):
+        for v in value:
+            refs |= find_refs(v)
+    return refs
+
+
+def resolve_type(value: Any) -> str:
+    """Convert schema value to Python type annotation."""
+    if isinstance(value, str):
+        if value.startswith("#"):
+            return to_class_name(value[1:])
+        return TYPE_MAP.get(value, "Any")
+    elif isinstance(value, dict):
+        if "type" in value:
+            return TYPE_MAP.get(value["type"], "Any")
+        return "Any"
+    elif isinstance(value, list):
+        return "list[Any]"
+    return "Any"
+
+
+def topological_sort(dependencies: dict[str, set[str]]) -> list[str]:
+    """Simple topological sort so dependencies appear before dependents."""
+    result = []
+    visited = set()
+
+    def visit(name: str):
+        if name in visited:
+            return
+        visited.add(name)
+        for dep in dependencies.get(name, []):
+            if dep in dependencies:
+                visit(dep)
+        result.append(name)
+
+    for cls in dependencies:
+        visit(cls)
+    return result
+
+
+def generate_dataclasses(schema: Dict[str, Dict]) -> str:
+    """Generate Python dataclasses from schema with dependency ordering."""
+    class_data = {}
+    dependencies = {}
+
+    # Collect class data and dependencies
+    for name, obj in schema.items():
+        cls_name = to_class_name(name)
+        props: Dict = obj.get("properties", {})
+        required = set(obj.get("required", []))
+        deps = set()
+        fields = []
+
+        for prop_name, prop_val in props.items():
+            field_name = sanitize_field_name(prop_name)
+            deps |= find_refs(prop_val)
+            type_hint = resolve_type(prop_val)
+
+            if prop_name in required:
+                fields.append(f"    {field_name}: {type_hint}")
+            else:
+                fields.append(f"    {field_name}: Optional[{type_hint}] = None")
+
+        class_data[cls_name] = fields
+        dependencies[cls_name] = deps
+
+    # Sort classes topologically
+    ordered_classes = topological_sort(dependencies)
+
+    # Generate Python code
+    code_lines = [
+        "from dataclasses import dataclass, asdict",
+        "from typing import Optional, Any, List, Dict",
+        "",
+    ]
+
+    code_lines.append(
+        '@dataclass\nclass Verb:\n    """Jambonz Verb base class."""\n\n    def __init__(self, verb: str, **kwargs):\n        self.verb = verb\n        self.kwargs = kwargs\n\n    def to_dict(self) -> Dict[str, Any]:\n        return (\n            {"verb": self.verb, **self.kwargs}\n            if hasattr(self, "kwargs")\n            else asdict(self)\n        )\n'
+    )
+
+    for cls_name in ordered_classes:
+        fields = class_data[cls_name]
+        if not fields:
+            code_lines.append(f"@dataclass\nclass {cls_name}:\n    pass\n")
+        else:
+            code_lines.append(
+                f"@dataclass\nclass {cls_name}(Verb):\n" + "\n".join(fields) + "\n"
+            )
+
+    return "\n".join(code_lines)
+
+
+# ---- Example usage ----
+if __name__ == "__main__":
+    schema = httpx.get(
+        "https://raw.githubusercontent.com/jambonz/verb-specifications/refs/heads/main/specs.json"
+    ).json()
+    result = generate_dataclasses(schema)
+    # create a file convert_output.py
+    with open("jambonz_verbs/types.py", "w") as f:
+        f.write(result)
