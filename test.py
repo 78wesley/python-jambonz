@@ -1,29 +1,19 @@
-from jambonz_verbs import *
-from jambonz_verbs.typ import (
-    TargetPhone,
-    TargetSip,
-    TargetUser,
-    TargetTeams,
-    Recognizer,
-    Synthesizer,
-    TTS,
-    FillerNoise,
-)
+from verbs import *
 
 app = Application()
 
-# VerbAlert
-app.add(VerbAlert(message="Test alert message"))
-app.add(VerbAlert(message="Another alert!"))
+# Alert
+app.add(Alert(message="Test alert message"))
+app.add(Alert(message="Another alert!", id="123"))
 
 
-# VerbAnswer
-app.add(VerbAnswer())
+# Answer
+app.add(Answer())
 
-# VerbConference
-app.add(VerbConference(name="ConfA"))
+# Conference
+app.add(Conference(name="ConfA"))
 app.add(
-    VerbConference(
+    Conference(
         name="ConfB",
         beep=True,
         joinMuted=True,
@@ -32,111 +22,118 @@ app.add(
     )
 )
 
-# VerbConfig
-app.add(VerbConfig())
+# Config
+app.add(Config())
 app.add(
-    VerbConfig(
+    Config(
         notifyEvents=True,
         onHoldMusic="https://hold.com",
-        recognizer=Recognizer(vendor="google", transcriptionHook="/hook"),
+        recognizer=Recognizer(vendor="aws"),
     )
 )
 
-# VerbDequeue
-app.add(VerbDequeue(name="Queue1"))
-app.add(VerbDequeue(name="Queue2", beep=True, timeout=30))
+# Dequeue
+app.add(Dequeue(name="Queue1"))
+app.add(Dequeue(name="Queue2", beep=True, timeout=30))
 
-# VerbDial
-app.add(VerbDial(target=[TargetPhone(number="1234567890")]))
+# Dial
+app.add(Dial(target=[Target(type="number", number="1234567890")]))
 app.add(
-    VerbDial(
-        target=[TargetSip(sipUri="sip:user@example.com")],
+    Dial(
+        target=[Target(type="sipUri", sipUri="sip:user@example.com")],
         timeout=10,
         answerOnBridge=True,
     )
 )
 app.add(
-    VerbDial(
-        target=[TargetUser(name="alice"), TargetTeams(number="teamsid")],
+    Dial(
+        target=[Target(type="teams", number="1234567890")],
         callerId="999",
         forwardPAI=False,
     )
 )
-
-# VerbDialogflow
-app.add(VerbDialogflow(credentials="creds", lang="en", project="proj"))
 app.add(
-    VerbDialogflow(
+    Dial(
+        target=[Target(type="user", name="alice")],
+        timeout=20,
+    )
+)
+
+
+# Dialogflow
+app.add(Dialogflow(credentials="creds", lang="en", project="proj"))
+app.add(
+    Dialogflow(
         credentials="c2",
         lang="fr",
         project="p2",
-        tts=TTS(language="nl"),
+        tts=Synthesizer(vendor="aws", voice="jean"),
         welcomeEventParams={"foo": "bar"},
     )
 )
 
-# VerbDtmf
-app.add(VerbDtmf(dtmf="1234"))
-app.add(VerbDtmf(dtmf="*#", duration="1000"))
+# Dtmf
+app.add(Dtmf(dtmf="1234"))
+app.add(Dtmf(dtmf="*#", duration="1000"))
 
-# Verbdub
-app.add(Verbdub(action="play", track="track1"))
-app.add(Verbdub(action="say", track="track2", gain="5", loop=True, say="Hello!"))
+# Dub
+app.add(Dub(action="play", track="track1"))
+app.add(Dub(action="say", track="track2", gain="5", loop=True, say="Hello!"))
 
-# VerbEnqueue
-app.add(VerbEnqueue(name="QueueA"))
-app.add(VerbEnqueue(name="QueueB", priority=1, waitHook="/wait"))
+# Enqueue
+app.add(Enqueue(name="QueueA"))
+app.add(Enqueue(name="QueueB", priority=1, waitHook="/wait"))
 
-# VerbGather
-app.add(VerbGather(actionHook="/gather-result"))
+# Gather
+app.add(Gather(actionHook="/gather-result"))
 app.add(
-    VerbGather(
+    Gather(
         actionHook="/gather2",
         input=["speech"],
         minDigits=2,
         maxDigits=5,
-        fillerNoise=FillerNoise(enable=True, startDelaySecs=1, url="/abc"),
+        fillerNoise=Fillernoise(enable=True, startDelaySecs=1, url="/abc"),
         play={"url": "https://audio"},
     )
 )
 
-# VerbHangup
-app.add(VerbHangup())
-app.add(VerbHangup(headers={"X-Reason": "test"}))
+# Hangup
+app.add(Hangup())
+app.add(Hangup(headers={"X-Reason": "test"}))
 
-# VerbLeave
-app.add(VerbLeave())
+# Leave
+app.add(Leave())
 
-# VerbListen
-app.add(VerbListen(actionHook="/hook", url="/url"))
-app.add(VerbListen(actionHook="/hook", url="/url", metadata={"ABC": "DEF"}))
+# Listen
+app.add(Listen(actionHook="/hook", url="/url"))
+app.add(Listen(actionHook="/hook", url="/url", metadata={"ABC": "DEF"}))
 
-# VerbLLM
-app.add(VerbLLM(model="abc", vendor="123"))
+# Pause
+app.add(Pause(length=5))
 
-# VerbPause
-app.add(VerbPause())
-app.add(VerbPause(length=5))
-
-# VerbPlay
-app.add(VerbPlay(url="https://example.com/music.mp3"))
+# Play
+app.add(Play(url="https://example.com/music.mp3"))
 app.add(
-    VerbPlay(url="https://audio.com/track.wav", loop=3, earlyMedia=True, timeoutSecs=10)
+    Play(url="https://audio.com/track.wav", loop=3, earlyMedia=True, timeoutSecs=10)
 )
 
-# VerbRasa
-app.add(VerbRasa(url="https://rasa.example.com"))
+# Rasa
+app.add(Rasa(url="https://rasa.example.com"))
 app.add(
-    VerbRasa(url="https://rasa2.com", promt="Say something", tts=TTS(language="nl"))
+    Rasa(
+        url="https://rasa2.com",
+        prompt="Say something",
+        tts=Synthesizer(vendor="aws", language="nl"),
+    )
 )
 
-# VerbRedirect
-app.add(VerbRedirect(actionHook="/redirect"))
+# Redirect
+app.add(Redirect(actionHook="/redirect"))
 
-# VerbSay
-app.add(VerbSay(text="Hello world"))
+# Say
+app.add(Say(text="Hello world"))
 app.add(
-    VerbSay(
+    Say(
         text="Streamed",
         stream=True,
         loop=2,
@@ -144,45 +141,36 @@ app.add(
     )
 )
 
-# VerbSipDecline
-app.add(VerbSipDecline(status=486))
-app.add(VerbSipDecline(status=603, reason="Busy", headers={"X-Reason": "busy"}))
+# SipDecline
+app.add(SipDecline(status=486))
+app.add(SipDecline(status=603, reason="Busy", headers={"X-Reason": "busy"}))
 
-# VerbSipRefer
-app.add(VerbSipRefer(referTo=12345))
-app.add(
-    VerbSipRefer(referTo=67890, reason="test", eventHook="/event", referredBy="bob")
-)
+# SipRefer
+app.add(SipRefer(referTo=12345))
+app.add(SipRefer(referTo=67890, eventHook="/event", referredBy="bob"))
 
-# VerbSipRequest
-app.add(VerbSipRequest(method="INVITE"))
-app.add(
-    VerbSipRequest(method="BYE", actionHook="/bye", body="bye", headers={"X-Bye": "1"})
-)
+# SipRequest
+app.add(SipRequest(method="INVITE"))
+app.add(SipRequest(method="BYE", actionHook="/bye", body="bye", headers={"X-Bye": "1"}))
 
 # VerbTag
-app.add(VerbTag(data={"key": "value"}))
-app.add(VerbTag(data={"foo": 123, "bar": [1, 2, 3]}))
+app.add(Tag(data={"key": "value"}))
+app.add(Tag(data={"foo": 123, "bar": [1, 2, 3]}))
 
-# VerbTranscribe
-app.add(VerbTranscribe(transcriptionHook="/transcribe"))
+# Transcribe
+app.add(Transcribe(transcriptionHook="/transcribe"))
 app.add(
-    VerbTranscribe(
+    Transcribe(
         transcriptionHook="/transcribe2",
-        recognizer=Recognizer(
-            vendor="google",
-            transcriptionHook="/hook",
-        ),
+        recognizer=Recognizer(vendor="google"),
     )
 )
 
 # Custom Verbs
 app.add(Verb(verb="customverb"))
-app.add(Verb(verb="customverb", abc="def"))
+app.add(Verb(verb="customverb", foo="bar", count=3))
 
-app.add(VerbSay())
-
-
-print(app.to_json(indent=4))
-print(app.to_dict())
-print(app.total())
+# print(app.to_json(indent=4))
+# print(app.to_dict())
+print(app.to_readable())
+# print("Total tasks:", app.total())
