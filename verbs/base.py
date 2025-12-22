@@ -1,8 +1,91 @@
-from dataclasses import dataclass, asdict, field
-from typing import Any, Dict, List, Optional, Union
+import json
+from typing import Any, Dict, List, Optional
 from .types import *
 
-import json
+__all__ = [
+    "Application",
+    "Verb",
+    "Alert",
+    "Answer",
+    "SipDecline",
+    "SipRequest",
+    "SipRefer",
+    "Awsoptions",
+    "Googleoptions",
+    "Deepgramoptions",
+    "Formatting",
+    "Nuanceoptions",
+    "Vad",
+    "Azureoptions",
+    "Assemblyaioptions",
+    "Customoptions",
+    "Turndetection",
+    "Prompttemplates",
+    "Openaioptions",
+    "Cobaltoptions",
+    "Houndifyoptions",
+    "Nvidiaoptions",
+    "SmAudioeventsconfig",
+    "SmSpeakerdiarizationconfig",
+    "SmPuctuationoverrides",
+    "SmTranscriptfilteringconfig",
+    "SmAudiofilteringconfig",
+    "SmTranscriptionconfig",
+    "SmTranslationconfig",
+    "Speechmaticsoptions",
+    "Ibmoptions",
+    "Verbiooptions",
+    "Elevenlabsoptions",
+    "Sonioxstorage",
+    "Sonioxoptions",
+    "Recognizer",
+    "Synthesizer",
+    "Ttsstream",
+    "Auth",
+    "Bidirectionalaudio",
+    "Listenoptions",
+    "Bargein",
+    "Fillernoise",
+    "Transcribeoptions",
+    "Actionhookdelayaction",
+    "Recordoptions",
+    "Amdtimers",
+    "Amd",
+    "Config",
+    "Dub",
+    "Dequeue",
+    "Enqueue",
+    "Leave",
+    "Hangup",
+    "Play",
+    "Say",
+    "Gather",
+    "Record",
+    "Conference",
+    "Transcribe",
+    "Listen",
+    "Dial",
+    "Queryinput",
+    "Dialogflow",
+    "Dtmf",
+    "Lexintent",
+    "Lex",
+    "Stream",
+    "Llm",
+    "Mcpserver",
+    "Message",
+    "Pause",
+    "Rasa",
+    "Redirect",
+    "Dialfrom",
+    "Target",
+    "RestDial",
+    "Tag",
+    "Resourcereference",
+    "Resource",
+    "Turndetectionpipeline",
+    "Pipeline",
+]
 
 
 class Application:
@@ -21,6 +104,14 @@ class Application:
 
     def to_json(self, **kwargs: Any) -> str:
         return json.dumps(self.to_dict(), **kwargs)
+
+    def to_readable(self) -> str:
+        lines = []
+        for i, verb in enumerate(self.to_dict(), start=1):
+            lines.append(
+                f"{i}. {verb.get('verb', '')}: { {k: v for k, v in verb.items() if k != 'verb'} }"
+            )
+        return "\n".join(lines)
 
     def total(self) -> int:
         return len(self.verbs)
