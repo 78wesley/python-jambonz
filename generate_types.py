@@ -179,7 +179,7 @@ def generate_dataclasses(schema: Dict[str, Dict]) -> str:
 # ---- Example usage ----
 if __name__ == "__main__":
     schema = httpx.get(
-        "https://raw.githubusercontent.com/jambonz/verb-specifications/refs/heads/main/specs.json"
+        "https://raw.githubusercontent.com/jambonz/verb-specifications/refs/heads/v0.1.6/specs.json"
     ).json()
     result = generate_dataclasses(schema)
     # create a file convert_output.py
