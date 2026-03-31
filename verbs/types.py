@@ -61,80 +61,67 @@ class SipRefer(Verb):
     eventHook: Optional[Any] = None
 
 @dataclass
-class Bargein:
+class Bidirectionalaudio:
+    enabled: Optional[bool] = None
+    streaming: Optional[bool] = None
+    sampleRate: Optional[float] = None
+
+@dataclass
+class Auth:
+    username: str
+    password: str
+
+@dataclass
+class Listenoptions:
     enable: bool
-    sticky: Optional[bool] = None
-    actionHook: Optional[Any] = None
-    partialResultHook: Optional[Any] = None
-    input: Optional[list[Any]] = None
-    finishOnKey: Optional[str] = None
-    numDigits: Optional[float] = None
-    minDigits: Optional[float] = None
-    maxDigits: Optional[float] = None
-    interDigitTimeout: Optional[float] = None
-    dtmfBargein: Optional[bool] = None
-    minBargeinWordCount: Optional[float] = None
+    url: Optional[str] = None
+    sampleRate: Optional[float] = None
+    wsAuth: Optional[Auth] = None
+    mixType: Optional[Literal['mono', 'stereo', 'mixed']] = None
+    metadata: Optional[dict[str, Any]] = None
+    maxLength: Optional[float] = None
+    passDtmf: Optional[bool] = None
+    playBeep: Optional[bool] = None
+    disableBidirectionalAudio: Optional[bool] = None
+    bidirectionalAudio: Optional[Bidirectionalaudio] = None
+    timeout: Optional[float] = None
 
 @dataclass
-class Cobaltoptions:
-    serverUri: Optional[str] = None
-    enableConfusionNetwork: Optional[bool] = None
-    metadata: Optional[str] = None
-    compiledContextData: Optional[str] = None
-    wordTimeOffsets: Optional[bool] = None
-    contextToken: Optional[str] = None
+class Fillernoise:
+    enable: bool
+    url: Optional[str] = None
+    startDelaySecs: Optional[float] = None
 
 @dataclass
-class Azureoptions:
-    speechSegmentationSilenceTimeoutMs: Optional[float] = None
-    postProcessing: Optional[str] = None
-    audioLogging: Optional[bool] = None
-    languageIdMode: Optional[Literal['AtStart', 'Continuous']] = None
-    speechRecognitionMode: Optional[Literal['CONVERSATION', 'DICTATION', 'INTERACTIVE']] = None
+class Recordoptions:
+    action: Literal['startCallRecording', 'stopCallRecording', 'pauseCallRecording', 'resumeCallRecording']
+    type: Optional[Literal['cloud', 'siprec']] = None
+    recordingID: Optional[str] = None
+    siprecServerURL: Optional[Any] = None
+    headers: Optional[dict[str, Any]] = None
 
 @dataclass
-class Assemblyaioptions:
-    apiKey: Optional[str] = None
-    serviceVersion: Optional[Literal['v2', 'v3']] = None
-    formatTurns: Optional[bool] = None
-    endOfTurnConfidenceThreshold: Optional[float] = None
-    minEndOfTurnSilenceWhenConfident: Optional[float] = None
-    maxTurnSilence: Optional[float] = None
+class Awsoptions:
+    accessKey: Optional[str] = None
+    secretKey: Optional[str] = None
+    securityToken: Optional[str] = None
+    region: Optional[str] = None
+    vocabularyName: Optional[str] = None
+    vocabularyFilterName: Optional[str] = None
+    vocabularyFilterMethod: Optional[Literal['remove', 'mask', 'tag']] = None
+    languageModelName: Optional[str] = None
+    piiEntityTypes: Optional[list[Any]] = None
+    piiIdentifyEntities: Optional[bool] = None
 
 @dataclass
-class Prompttemplates:
-    hintsTemplate: Optional[str] = None
-    conversationHistoryTemplate: Optional[str] = None
-
-@dataclass
-class Turndetection:
-    type: Literal['none', 'server_vad', 'semantic_vad']
-    eagerness: Optional[Literal['low', 'medium', 'high', 'auto']] = None
-    threshold: Optional[float] = None
-    prefix_padding_ms: Optional[float] = None
-    silence_duration_ms: Optional[float] = None
-
-@dataclass
-class Openaioptions:
-    apiKey: Optional[str] = None
-    model: Optional[str] = None
-    prompt: Optional[str] = None
-    promptTemplates: Optional[Prompttemplates] = None
-    language: Optional[str] = None
-    input_audio_noise_reduction: Optional[Literal['near_field', 'far_field']] = None
-    turn_detection: Optional[Turndetection] = None
-
-@dataclass
-class Verbiooptions:
-    enable_formatting: Optional[bool] = None
-    enable_diarization: Optional[bool] = None
-    topic: Optional[float] = None
-    inline_grammar: Optional[str] = None
-    grammar_uri: Optional[str] = None
-    label: Optional[str] = None
-    recognition_timeout: Optional[float] = None
-    speech_complete_timeout: Optional[float] = None
-    speech_incomplete_timeout: Optional[float] = None
+class Elevenlabsoptions:
+    includeTimestamps: Optional[bool] = None
+    commitStrategy: Optional[Literal['manual', 'vad']] = None
+    vadSilenceThresholdSecs: Optional[float] = None
+    vadThreshold: Optional[float] = None
+    minSpeechDurationMs: Optional[float] = None
+    minSilenceDurationMs: Optional[float] = None
+    enableLogging: Optional[bool] = None
 
 @dataclass
 class Deepgramoptions:
@@ -173,166 +160,12 @@ class Deepgramoptions:
     eagerEotThreshold: Optional[float] = None
 
 @dataclass
-class Googleoptions:
-    serviceVersion: Optional[Literal['v1', 'v2']] = None
-    recognizerId: Optional[str] = None
-    speechStartTimeoutMs: Optional[float] = None
-    speechEndTimeoutMs: Optional[float] = None
-    enableVoiceActivityEvents: Optional[bool] = None
-    transcriptNormalization: Optional[list[Any]] = None
-
-@dataclass
-class Customoptions:
-    authToken: Optional[str] = None
-    uri: Optional[str] = None
-    sampleRate: Optional[float] = None
-    options: Optional[dict[str, Any]] = None
-
-@dataclass
-class Elevenlabsoptions:
-    includeTimestamps: Optional[bool] = None
-    commitStrategy: Optional[Literal['manual', 'vad']] = None
-    vadSilenceThresholdSecs: Optional[float] = None
-    vadThreshold: Optional[float] = None
-    minSpeechDurationMs: Optional[float] = None
-    minSilenceDurationMs: Optional[float] = None
-    enableLogging: Optional[bool] = None
-
-@dataclass
-class Nvidiaoptions:
-    rivaUri: Optional[str] = None
-    maxAlternatives: Optional[float] = None
-    profanityFilter: Optional[bool] = None
-    punctuation: Optional[bool] = None
-    wordTimeOffsets: Optional[bool] = None
-    verbatimTranscripts: Optional[bool] = None
-    customConfiguration: Optional[dict[str, Any]] = None
-
-@dataclass
-class Formatting:
-    scheme: str
-    options: dict[str, Any]
-
-@dataclass
-class Nuanceoptions:
-    clientId: Optional[str] = None
-    secret: Optional[str] = None
-    kryptonEndpoint: Optional[str] = None
-    topic: Optional[str] = None
-    utteranceDetectionMode: Optional[Literal['single', 'multiple', 'disabled']] = None
-    punctuation: Optional[bool] = None
-    profanityFilter: Optional[bool] = None
-    includeTokenization: Optional[bool] = None
-    discardSpeakerAdaptation: Optional[bool] = None
-    suppressCallRecording: Optional[bool] = None
-    maskLoadFailures: Optional[bool] = None
-    suppressInitialCapitalization: Optional[bool] = None
-    allowZeroBaseLmWeight: Optional[bool] = None
-    filterWakeupWord: Optional[bool] = None
-    resultType: Optional[Literal['final', 'partial', 'immutable_partial']] = None
-    noInputTimeoutMs: Optional[float] = None
-    recognitionTimeoutMs: Optional[float] = None
-    utteranceEndSilenceMs: Optional[float] = None
-    maxHypotheses: Optional[float] = None
-    speechDomain: Optional[str] = None
-    formatting: Optional[Formatting] = None
-    clientData: Optional[dict[str, Any]] = None
-    userId: Optional[str] = None
-    speechDetectionSensitivity: Optional[float] = None
-    resources: Optional[list[Any]] = None
-
-@dataclass
-class Awsoptions:
-    accessKey: Optional[str] = None
-    secretKey: Optional[str] = None
-    securityToken: Optional[str] = None
-    region: Optional[str] = None
-    vocabularyName: Optional[str] = None
-    vocabularyFilterName: Optional[str] = None
-    vocabularyFilterMethod: Optional[Literal['remove', 'mask', 'tag']] = None
-    languageModelName: Optional[str] = None
-    piiEntityTypes: Optional[list[Any]] = None
-    piiIdentifyEntities: Optional[bool] = None
-
-@dataclass
-class Sonioxstorage:
-    id: Optional[str] = None
-    title: Optional[str] = None
-    disableStoreAudio: Optional[bool] = None
-    disableStoreTranscript: Optional[bool] = None
-    disableSearch: Optional[bool] = None
-    metadata: Optional[dict[str, Any]] = None
-
-@dataclass
-class Sonioxoptions:
-    apiKey: Optional[str] = None
-    model: Optional[str] = None
-    endpointDetection: Optional[bool] = None
-    profanityFilter: Optional[bool] = None
-    speechContext: Optional[str] = None
-    clientRequestReference: Optional[str] = None
-    storage: Optional[Sonioxstorage] = None
-
-@dataclass
-class SmPuctuationoverrides:
-    permitted_marks: Optional[list[Any]] = None
-    sensitivity: Optional[float] = None
-
-@dataclass
-class SmSpeakerdiarizationconfig:
-    speaker_sensitivity: Optional[float] = None
-    max_speakers: Optional[float] = None
-
-@dataclass
-class SmTranscriptfilteringconfig:
-    remove_disfluencies: bool
-
-@dataclass
-class SmAudiofilteringconfig:
-    volume_threshold: float
-
-@dataclass
-class SmTranscriptionconfig:
-    language: Optional[str] = None
-    domain: Optional[str] = None
-    additional_vocab: Optional[list[Any]] = None
-    diarization: Optional[str] = None
-    speaker_diarization_config: Optional[SmSpeakerdiarizationconfig] = None
-    enable_partials: Optional[bool] = None
-    max_delay: Optional[float] = None
-    max_delay_mode: Optional[Literal['fixed', 'flexible']] = None
-    output_locale: Optional[str] = None
-    punctuation_overrides: Optional[SmPuctuationoverrides] = None
-    operating_point: Optional[str] = None
-    enable_entities: Optional[bool] = None
-    audio_filtering_config: Optional[SmAudiofilteringconfig] = None
-    transcript_filtering_config: Optional[SmTranscriptfilteringconfig] = None
-
-@dataclass
-class SmAudioeventsconfig:
-    types: Optional[Literal['applause', 'music', 'laughter']] = None
-
-@dataclass
-class SmTranslationconfig:
-    target_languages: list[Any]
-    enable_partials: Optional[bool] = None
-
-@dataclass
-class Speechmaticsoptions:
-    transcription_config: Optional[SmTranscriptionconfig] = None
-    translation_config: Optional[SmTranslationconfig] = None
-    audio_events_config_config: Optional[SmAudioeventsconfig] = None
-
-@dataclass
-class Vad:
-    enable: Optional[bool] = None
-    voiceMs: Optional[float] = None
-    silenceMs: Optional[float] = None
-    strategy: Optional[str] = None
-    mode: Optional[float] = None
-    vendor: Optional[Literal['webrtc', 'silero']] = None
-    threshold: Optional[float] = None
-    speechPadMs: Optional[float] = None
+class Azureoptions:
+    speechSegmentationSilenceTimeoutMs: Optional[float] = None
+    postProcessing: Optional[str] = None
+    audioLogging: Optional[bool] = None
+    languageIdMode: Optional[Literal['AtStart', 'Continuous']] = None
+    speechRecognitionMode: Optional[Literal['CONVERSATION', 'DICTATION', 'INTERACTIVE']] = None
 
 @dataclass
 class Ibmoptions:
@@ -347,6 +180,34 @@ class Ibmoptions:
     baseModelVersion: Optional[str] = None
     watsonMetadata: Optional[str] = None
     watsonLearningOptOut: Optional[bool] = None
+
+@dataclass
+class Nvidiaoptions:
+    rivaUri: Optional[str] = None
+    maxAlternatives: Optional[float] = None
+    profanityFilter: Optional[bool] = None
+    punctuation: Optional[bool] = None
+    wordTimeOffsets: Optional[bool] = None
+    verbatimTranscripts: Optional[bool] = None
+    customConfiguration: Optional[dict[str, Any]] = None
+
+@dataclass
+class Googleoptions:
+    serviceVersion: Optional[Literal['v1', 'v2']] = None
+    recognizerId: Optional[str] = None
+    speechStartTimeoutMs: Optional[float] = None
+    speechEndTimeoutMs: Optional[float] = None
+    enableVoiceActivityEvents: Optional[bool] = None
+    transcriptNormalization: Optional[list[Any]] = None
+
+@dataclass
+class Cobaltoptions:
+    serverUri: Optional[str] = None
+    enableConfusionNetwork: Optional[bool] = None
+    metadata: Optional[str] = None
+    compiledContextData: Optional[str] = None
+    wordTimeOffsets: Optional[bool] = None
+    contextToken: Optional[str] = None
 
 @dataclass
 class Houndifyoptions:
@@ -384,6 +245,183 @@ class Houndifyoptions:
     connectionTimeout: Optional[float] = None
     customVocabulary: Optional[list[Any]] = None
     languageModel: Optional[str] = None
+    audioQueryAbsoluteTimeout: Optional[float] = None
+
+@dataclass
+class Vad:
+    enable: Optional[bool] = None
+    voiceMs: Optional[float] = None
+    silenceMs: Optional[float] = None
+    strategy: Optional[str] = None
+    mode: Optional[float] = None
+    vendor: Optional[Literal['webrtc', 'silero']] = None
+    threshold: Optional[float] = None
+    speechPadMs: Optional[float] = None
+
+@dataclass
+class Assemblyaioptions:
+    apiKey: Optional[str] = None
+    serviceVersion: Optional[Literal['v2', 'v3']] = None
+    speechModel: Optional[str] = None
+    formatTurns: Optional[bool] = None
+    endOfTurnConfidenceThreshold: Optional[float] = None
+    minEndOfTurnSilenceWhenConfident: Optional[float] = None
+    maxTurnSilence: Optional[float] = None
+    minTurnSilence: Optional[float] = None
+    keyterms: Optional[list[Any]] = None
+    prompt: Optional[str] = None
+    languageDetection: Optional[bool] = None
+    vadThreshold: Optional[float] = None
+    inactivityTimeout: Optional[float] = None
+
+@dataclass
+class Formatting:
+    scheme: str
+    options: dict[str, Any]
+
+@dataclass
+class Nuanceoptions:
+    clientId: Optional[str] = None
+    secret: Optional[str] = None
+    kryptonEndpoint: Optional[str] = None
+    topic: Optional[str] = None
+    utteranceDetectionMode: Optional[Literal['single', 'multiple', 'disabled']] = None
+    punctuation: Optional[bool] = None
+    profanityFilter: Optional[bool] = None
+    includeTokenization: Optional[bool] = None
+    discardSpeakerAdaptation: Optional[bool] = None
+    suppressCallRecording: Optional[bool] = None
+    maskLoadFailures: Optional[bool] = None
+    suppressInitialCapitalization: Optional[bool] = None
+    allowZeroBaseLmWeight: Optional[bool] = None
+    filterWakeupWord: Optional[bool] = None
+    resultType: Optional[Literal['final', 'partial', 'immutable_partial']] = None
+    noInputTimeoutMs: Optional[float] = None
+    recognitionTimeoutMs: Optional[float] = None
+    utteranceEndSilenceMs: Optional[float] = None
+    maxHypotheses: Optional[float] = None
+    speechDomain: Optional[str] = None
+    formatting: Optional[Formatting] = None
+    clientData: Optional[dict[str, Any]] = None
+    userId: Optional[str] = None
+    speechDetectionSensitivity: Optional[float] = None
+    resources: Optional[list[Any]] = None
+
+@dataclass
+class Verbiooptions:
+    enable_formatting: Optional[bool] = None
+    enable_diarization: Optional[bool] = None
+    topic: Optional[float] = None
+    inline_grammar: Optional[str] = None
+    grammar_uri: Optional[str] = None
+    label: Optional[str] = None
+    recognition_timeout: Optional[float] = None
+    speech_complete_timeout: Optional[float] = None
+    speech_incomplete_timeout: Optional[float] = None
+
+@dataclass
+class Customoptions:
+    authToken: Optional[str] = None
+    uri: Optional[str] = None
+    sampleRate: Optional[float] = None
+    options: Optional[dict[str, Any]] = None
+
+@dataclass
+class Sonioxstorage:
+    id: Optional[str] = None
+    title: Optional[str] = None
+    disableStoreAudio: Optional[bool] = None
+    disableStoreTranscript: Optional[bool] = None
+    disableSearch: Optional[bool] = None
+    metadata: Optional[dict[str, Any]] = None
+
+@dataclass
+class Sonioxoptions:
+    apiKey: Optional[str] = None
+    model: Optional[str] = None
+    endpointDetection: Optional[bool] = None
+    profanityFilter: Optional[bool] = None
+    speechContext: Optional[str] = None
+    clientRequestReference: Optional[str] = None
+    storage: Optional[Sonioxstorage] = None
+
+@dataclass
+class SmTranslationconfig:
+    target_languages: list[Any]
+    enable_partials: Optional[bool] = None
+
+@dataclass
+class SmAudioeventsconfig:
+    types: Optional[Literal['applause', 'music', 'laughter']] = None
+
+@dataclass
+class SmAudiofilteringconfig:
+    volume_threshold: float
+
+@dataclass
+class SmPuctuationoverrides:
+    permitted_marks: Optional[list[Any]] = None
+    sensitivity: Optional[float] = None
+
+@dataclass
+class SmSpeakerdiarizationconfig:
+    speaker_sensitivity: Optional[float] = None
+    max_speakers: Optional[float] = None
+
+@dataclass
+class SmTranscriptfilteringconfig:
+    remove_disfluencies: bool
+
+@dataclass
+class SmConversationconfig:
+    end_of_utterance_silence_trigger: Optional[float] = None
+
+@dataclass
+class SmTranscriptionconfig:
+    language: Optional[str] = None
+    domain: Optional[str] = None
+    additional_vocab: Optional[list[Any]] = None
+    diarization: Optional[str] = None
+    speaker_diarization_config: Optional[SmSpeakerdiarizationconfig] = None
+    conversation_config: Optional[SmConversationconfig] = None
+    enable_partials: Optional[bool] = None
+    max_delay: Optional[float] = None
+    max_delay_mode: Optional[Literal['fixed', 'flexible']] = None
+    output_locale: Optional[str] = None
+    punctuation_overrides: Optional[SmPuctuationoverrides] = None
+    operating_point: Optional[str] = None
+    enable_entities: Optional[bool] = None
+    audio_filtering_config: Optional[SmAudiofilteringconfig] = None
+    transcript_filtering_config: Optional[SmTranscriptfilteringconfig] = None
+
+@dataclass
+class Speechmaticsoptions:
+    transcription_config: Optional[SmTranscriptionconfig] = None
+    translation_config: Optional[SmTranslationconfig] = None
+    audio_events_config_config: Optional[SmAudioeventsconfig] = None
+
+@dataclass
+class Prompttemplates:
+    hintsTemplate: Optional[str] = None
+    conversationHistoryTemplate: Optional[str] = None
+
+@dataclass
+class Turndetection:
+    type: Literal['none', 'server_vad', 'semantic_vad']
+    eagerness: Optional[Literal['low', 'medium', 'high', 'auto']] = None
+    threshold: Optional[float] = None
+    prefix_padding_ms: Optional[float] = None
+    silence_duration_ms: Optional[float] = None
+
+@dataclass
+class Openaioptions:
+    apiKey: Optional[str] = None
+    model: Optional[str] = None
+    prompt: Optional[str] = None
+    promptTemplates: Optional[Prompttemplates] = None
+    language: Optional[str] = None
+    input_audio_noise_reduction: Optional[Literal['near_field', 'far_field']] = None
+    turn_detection: Optional[Turndetection] = None
 
 @dataclass
 class Recognizer:
@@ -394,6 +432,7 @@ class Recognizer:
     fallbackLabel: Optional[str] = None
     fallbackLanguage: Optional[str] = None
     vad: Optional[Vad] = None
+    autogeneratePrompt: Optional[bool] = None
     hints: Optional[list[Any]] = None
     hintsBoost: Optional[float] = None
     altLanguages: Optional[list[Any]] = None
@@ -459,19 +498,6 @@ class Amd:
     recognizer: Optional[Recognizer] = None
 
 @dataclass
-class Fillernoise:
-    enable: bool
-    url: Optional[str] = None
-    startDelaySecs: Optional[float] = None
-
-@dataclass
-class Recordoptions:
-    action: Literal['startCallRecording', 'stopCallRecording', 'pauseCallRecording', 'resumeCallRecording']
-    recordingID: Optional[str] = None
-    siprecServerURL: Optional[Any] = None
-    headers: Optional[dict[str, Any]] = None
-
-@dataclass
 class Synthesizer:
     vendor: str
     label: Optional[str] = None
@@ -491,30 +517,26 @@ class Ttsstream:
     synthesizer: Optional[Synthesizer] = None
 
 @dataclass
-class Auth:
-    username: str
-    password: str
-
-@dataclass
-class Bidirectionalaudio:
-    enabled: Optional[bool] = None
-    streaming: Optional[bool] = None
-    sampleRate: Optional[float] = None
-
-@dataclass
-class Listenoptions:
+class Bargein:
     enable: bool
-    url: Optional[str] = None
-    sampleRate: Optional[float] = None
-    wsAuth: Optional[Auth] = None
-    mixType: Optional[Literal['mono', 'stereo', 'mixed']] = None
-    metadata: Optional[dict[str, Any]] = None
-    maxLength: Optional[float] = None
-    passDtmf: Optional[bool] = None
-    playBeep: Optional[bool] = None
-    disableBidirectionalAudio: Optional[bool] = None
-    bidirectionalAudio: Optional[Bidirectionalaudio] = None
-    timeout: Optional[float] = None
+    sticky: Optional[bool] = None
+    actionHook: Optional[Any] = None
+    partialResultHook: Optional[Any] = None
+    input: Optional[list[Any]] = None
+    finishOnKey: Optional[str] = None
+    numDigits: Optional[float] = None
+    minDigits: Optional[float] = None
+    maxDigits: Optional[float] = None
+    interDigitTimeout: Optional[float] = None
+    dtmfBargein: Optional[bool] = None
+    minBargeinWordCount: Optional[float] = None
+
+@dataclass
+class Noiseisolation:
+    enable: Optional[bool] = None
+    vendor: Optional[str] = None
+    level: Optional[float] = None
+    model: Optional[str] = None
 
 @dataclass
 class Actionhookdelayaction:
@@ -524,6 +546,13 @@ class Actionhookdelayaction:
     retries: Optional[float] = None
     actions: Optional[list[Any]] = None
     giveUpActions: Optional[list[Any]] = None
+
+@dataclass
+class Turntaking:
+    enable: Optional[bool] = None
+    vendor: Optional[str] = None
+    threshold: Optional[float] = None
+    model: Optional[str] = None
 
 @dataclass
 class Transcribeoptions:
@@ -557,6 +586,9 @@ class Config(Verb):
     earlyMedia: Optional[bool] = None
     autoStreamTts: Optional[bool] = None
     disableTtsCache: Optional[bool] = None
+    trackTtsPlayout: Optional[bool] = None
+    noiseIsolation: Optional[Noiseisolation] = None
+    turnTaking: Optional[Turntaking] = None
 
 @dataclass
 class Dub(Verb):
@@ -649,31 +681,6 @@ class Gather(Verb):
     actionHookDelayAction: Optional[Actionhookdelayaction] = None
 
 @dataclass
-class Record:
-    path: str
-
-@dataclass
-class Conference(Verb):
-    verb = "conference"
-    name: str
-    id: Optional[str] = None
-    beep: Optional[bool] = None
-    memberTag: Optional[str] = None
-    speakOnlyTo: Optional[str] = None
-    startConferenceOnEnter: Optional[bool] = None
-    endConferenceOnExit: Optional[bool] = None
-    endConferenceDuration: Optional[float] = None
-    maxParticipants: Optional[float] = None
-    joinMuted: Optional[bool] = None
-    actionHook: Optional[Any] = None
-    waitHook: Optional[Any] = None
-    statusEvents: Optional[list[Any]] = None
-    statusHook: Optional[Any] = None
-    enterHook: Optional[Any] = None
-    record: Optional[Record] = None
-    distributeDtmf: Optional[bool] = None
-
-@dataclass
 class Transcribe(Verb):
     verb = "transcribe"
     id: Optional[str] = None
@@ -704,6 +711,32 @@ class Listen(Verb):
     wsAuth: Optional[Auth] = None
     earlyMedia: Optional[bool] = None
     channel: Optional[float] = None
+
+@dataclass
+class Record:
+    path: str
+
+@dataclass
+class Conference(Verb):
+    verb = "conference"
+    name: str
+    id: Optional[str] = None
+    beep: Optional[bool] = None
+    memberTag: Optional[str] = None
+    speakOnlyTo: Optional[str] = None
+    startConferenceOnEnter: Optional[bool] = None
+    endConferenceOnExit: Optional[bool] = None
+    endConferenceDuration: Optional[float] = None
+    maxParticipants: Optional[float] = None
+    joinMuted: Optional[bool] = None
+    actionHook: Optional[Any] = None
+    waitHook: Optional[Any] = None
+    statusEvents: Optional[list[Any]] = None
+    statusHook: Optional[Any] = None
+    enterHook: Optional[Any] = None
+    record: Optional[Record] = None
+    listen: Optional[Listen] = None
+    distributeDtmf: Optional[bool] = None
 
 @dataclass
 class Dial(Verb):
@@ -752,7 +785,7 @@ class Dialogflow(Verb):
     agent: Optional[str] = None
     environment: Optional[str] = None
     region: Optional[str] = None
-    model: Optional[Literal['es', 'cx']] = None
+    model: Optional[Literal['es', 'cx', 'ces']] = None
     actionHook: Optional[Any] = None
     eventHook: Optional[Any] = None
     events: Optional[list[Any]] = None
@@ -795,26 +828,6 @@ class Lex:
     eventHook: Optional[Any] = None
     noInputTimeout: Optional[float] = None
     tts: Optional[Synthesizer] = None
-
-@dataclass
-class Stream:
-    url: str
-    id: Optional[str] = None
-    actionHook: Optional[Any] = None
-    auth: Optional[Auth] = None
-    finishOnKey: Optional[str] = None
-    maxLength: Optional[float] = None
-    metadata: Optional[dict[str, Any]] = None
-    mixType: Optional[Literal['mono', 'stereo', 'mixed']] = None
-    passDtmf: Optional[bool] = None
-    playBeep: Optional[bool] = None
-    disableBidirectionalAudio: Optional[bool] = None
-    bidirectionalAudio: Optional[Bidirectionalaudio] = None
-    sampleRate: Optional[float] = None
-    timeout: Optional[float] = None
-    transcribe: Optional[Transcribe] = None
-    wsAuth: Optional[Auth] = None
-    earlyMedia: Optional[bool] = None
 
 @dataclass
 class Llm:
@@ -870,6 +883,7 @@ class Redirect(Verb):
     verb = "redirect"
     actionHook: Any
     id: Optional[str] = None
+    statusHook: Optional[Any] = None
 
 @dataclass
 class Dialfrom:
@@ -944,19 +958,21 @@ class Resource:
     reuse: Optional[Literal['undefined_reuse', 'low_reuse', 'high_reuse']] = None
 
 @dataclass
-class Turndetectionpipeline:
-    vendor: Literal['krisp']
-    threshold: Optional[float] = None
-    eagerEotThreshold: Optional[float] = None
+class Bargeinpipeline:
+    enable: Optional[bool] = None
+    minSpeechDuration: Optional[float] = None
+    sticky: Optional[bool] = None
 
 @dataclass
 class Pipeline:
-    stt: Recognizer
-    tts: Synthesizer
     llm: Llm
     id: Optional[str] = None
-    vad: Optional[Vad] = None
-    turnDetection: Optional[Turndetectionpipeline] = None
-    preflightLlm: Optional[bool] = None
+    stt: Optional[Recognizer] = None
+    tts: Optional[Synthesizer] = None
+    turnDetection: Optional[Any] = None
+    bargeIn: Optional[Bargeinpipeline] = None
     actionHook: Optional[Any] = None
     eventHook: Optional[Any] = None
+    toolHook: Optional[Any] = None
+    greeting: Optional[bool] = None
+    earlyGeneration: Optional[bool] = None

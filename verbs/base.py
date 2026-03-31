@@ -70,7 +70,6 @@ __all__ = [
     "Dtmf",
     "Lexintent",
     "Lex",
-    "Stream",
     "Llm",
     "Mcpserver",
     "Message",
@@ -83,8 +82,11 @@ __all__ = [
     "Tag",
     "Resourcereference",
     "Resource",
-    "Turndetectionpipeline",
+    "Turntaking",
     "Pipeline",
+    "Bargeinpipeline",
+    "Noiseisolation",
+    "SmConversationconfig"
 ]
 
 

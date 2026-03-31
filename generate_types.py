@@ -151,7 +151,7 @@ def generate_dataclasses(schema: Dict[str, Dict]) -> str:
     ]
 
     code_lines.append(
-        '@dataclass\nclass Verb:\n    """Jambonz Verb base class."""\n\n    def __init__(self, verb: str, **kwargs):\n        self.verb = verb\n        self.kwargs = kwargs\n\n    def to_dict(self) -> Dict[str, Any]:\n        d = asdict(self)\n        if "verb" not in d or d.get("verb") is None:\n            d["verb"] = getattr(self, "verb", self.__class__.__name__.lower())\n        return d\n'
+        '@dataclass\nclass Verb:\n    """Jambonz Verb base class."""\n\n    def __init__(self, verb: str, **kwargs):\n        self.verb = verb\n        for key, value in kwargs.items():\n            setattr(self, key, value)\n\n    def to_dict(self) -> Dict[str, Any]:\n        d = asdict(self)\n        # Include any additional attributes that were set via kwargs\n        for key, value in self.__dict__.items():\n            if key not in d:\n                d[key] = value\n        if "verb" not in d or d.get("verb") is None:\n            d["verb"] = getattr(self, "verb", self.__class__.__name__.lower())\n        return d\n'
     )
 
     for cls_name in ordered_classes:
